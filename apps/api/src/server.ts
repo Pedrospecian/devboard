@@ -1,0 +1,44 @@
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import { env } from "./config/env";
+import { authRouter } from "./modules/auth/auth.router";
+import { transactionsRouter } from "./modules/transactions/transactions.router";
+import { ZodError } from "zod";
+
+const app = express();
+
+// Middlewares globais
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(express.json());
+
+// Health check
+app.get("/health", (_req, res) => res.json({ status: "ok" }));
+
+// Rotas
+app.use("/auth", authRouter);
+
+app.use("/transactions", transactionsRouter);
+
+// Error handler global
+app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if (err instanceof ZodError) {
+    res.status(422).json({
+      message: "Dados inválidos",
+      errors: err.flatten().fieldErrors,
+    });
+    return;
+  }
+
+  if (err instanceof Error) {
+    const status = err.message.includes("inválid") || err.message.includes("cadastrad") ? 400 : 500;
+    res.status(status).json({ message: err.message });
+    return;
+  }
+
+  res.status(500).json({ message: "Erro interno do servidor" });
+});
+
+app.listen(env.PORT, () => {
+  console.log(`🚀 API rodando em http://localhost:${env.PORT}`);
+});
