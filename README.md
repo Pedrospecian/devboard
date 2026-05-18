@@ -2,7 +2,7 @@
 
 A full-stack personal finance dashboard built with Next.js, Node.js, TypeScript, and PostgreSQL. Users can track income and expenses, visualize spending trends over the last 6 months, and manage transactions in real time.
 
-![Dashboard Preview](https://placehold.co/1280x720?text=Add+a+screenshot+here)
+![Dashboard Preview](https://github.com/Pedrospecian/devboard/blob/main/docs/screenshot-light.png)
 
 🔗 **Live demo:** _coming soon_
 
