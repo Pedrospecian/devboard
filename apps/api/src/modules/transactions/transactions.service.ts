@@ -19,11 +19,11 @@ export async function getSummary(userId: string) {
 
   const income = transactions
     .filter((t) => t.type === "INCOME")
-    .reduce((sum, t) => sum + Number(t.amount), 0);
+    .reduce((sum: number, t) => sum + Number(t.amount), 0);
 
   const expense = transactions
     .filter((t) => t.type === "EXPENSE")
-    .reduce((sum, t) => sum + Number(t.amount), 0);
+    .reduce((sum: number, t) => sum + Number(t.amount), 0);
 
   return { income, expense, balance: income - expense };
 }
@@ -46,11 +46,11 @@ export async function getMonthlyChart(userId: string) {
 
       const income = transactions
         .filter((t) => t.type === "INCOME")
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+        .reduce((sum: number, t) => sum + Number(t.amount), 0);
 
       const expense = transactions
         .filter((t) => t.type === "EXPENSE")
-        .reduce((sum, t) => sum + Number(t.amount), 0);
+        .reduce((sum: number, t) => sum + Number(t.amount), 0);
 
       return {
         month: start.toLocaleString("pt-BR", { month: "short" }),

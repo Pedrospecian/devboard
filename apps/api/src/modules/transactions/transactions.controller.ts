@@ -33,7 +33,10 @@ export async function create(req: Request, res: Response, next: NextFunction) {
 
 export async function remove(req: Request, res: Response, next: NextFunction) {
   try {
-    await service.deleteTransaction(req.user!.id, req.params.id);
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    await service.deleteTransaction(req.user!.id, id);
     res.status(204).send();
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 }
