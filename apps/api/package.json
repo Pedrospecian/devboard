@@ -4,9 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "prisma generate && tsc",
-    "start": "prisma migrate deploy && node dist/server.js",
-    "postinstall": "prisma generate"
+    "build": "prisma generate --schema=./prisma/schema.prisma && tsc",
+    "start": "prisma migrate deploy --schema=./prisma/schema.prisma && node dist/server.js",
+    "postinstall": "prisma generate --schema=./prisma/schema.prisma"
   },
   "author": "",
   "license": "ISC",
