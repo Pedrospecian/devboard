@@ -9,7 +9,15 @@ import { ZodError } from "zod";
 const app = express();
 
 // Middlewares globais
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({
+  origin: [
+    'http://localhost:3000', // Permite seu Next.js local
+    'https://devboard-web-pink.vercel.app' // SUBSTiTUA pela URL real do seu frontend na Vercel
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}));
 app.use(express.json());
 
 // Health check
