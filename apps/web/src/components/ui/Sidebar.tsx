@@ -10,7 +10,7 @@ export function Sidebar({ children, style }: SidebarProps) {
         padding: "1.25rem",
         borderRadius: "12px",
         background: "var(--bg-surface)",
-        border: "1px solid var(--border)",
+        border: "1px solid var(--border)", 
         ...style,
       }}
     >
