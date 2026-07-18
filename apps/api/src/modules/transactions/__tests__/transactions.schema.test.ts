@@ -4,7 +4,7 @@ import { createTransactionSchema } from "../transactions.schema";
 describe("createTransactionSchema", () => {
   it("aceita um payload válido", () => {
     const result = createTransactionSchema.safeParse({
-      title: "GroceriesGroceries",
+      title: "Groceries",
       amount: 150.9,
       type: "EXPENSE",
       category: "Food",

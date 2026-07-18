@@ -1,10 +1,10 @@
-# DevBoard — Personal Finance Dashboard
+# DevBoard - Personal Finance Dashboard
 
 A full-stack personal finance dashboard built with Next.js, Node.js, TypeScript, and PostgreSQL. Users can track income and expenses, visualize spending trends over the last 6 months, and manage transactions in real time.
 
 ![Dashboard Preview](https://github.com/Pedrospecian/devboard/blob/main/docs/screenshot-light.png)
 
-🔗 **Live demo:** _coming soon_
+🔗 **Live demo:** (https://devboard-web-pink.vercel.app/)
 
 ---
 
