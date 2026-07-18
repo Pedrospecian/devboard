@@ -8,7 +8,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
     const result = await authService.registerUser(input);
 
     res.status(201).json({
-      message: "Usuário criado com sucesso",
+      message: "User successfully created",
       user: result.user,
       accessToken: result.accessToken,
       refreshToken: result.refreshToken,

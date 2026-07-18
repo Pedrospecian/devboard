@@ -4,10 +4,10 @@ import { createTransactionSchema } from "../transactions.schema";
 describe("createTransactionSchema", () => {
   it("aceita um payload válido", () => {
     const result = createTransactionSchema.safeParse({
-      title: "Mercado",
+      title: "GroceriesGroceries",
       amount: 150.9,
       type: "EXPENSE",
-      category: "Alimentação",
+      category: "Food",
       date: new Date().toISOString(),
     });
 
@@ -19,7 +19,7 @@ describe("createTransactionSchema", () => {
       title: "",
       amount: 100,
       type: "EXPENSE",
-      category: "Alimentação",
+      category: "Food",
       date: new Date().toISOString(),
     });
 
@@ -29,10 +29,10 @@ describe("createTransactionSchema", () => {
   it("rejeita valor negativo ou zero", () => {
     for (const amount of [-10, 0]) {
       const result = createTransactionSchema.safeParse({
-        title: "Mercado",
+        title: "Groceries",
         amount,
         type: "EXPENSE",
-        category: "Alimentação",
+        category: "Food",
         date: new Date().toISOString(),
       });
       expect(result.success).toBe(false);
@@ -41,10 +41,10 @@ describe("createTransactionSchema", () => {
 
   it("rejeita tipo fora de INCOME/EXPENSE", () => {
     const result = createTransactionSchema.safeParse({
-      title: "Mercado",
+      title: "Groceries",
       amount: 100,
       type: "TRANSFER",
-      category: "Alimentação",
+      category: "Food",
       date: new Date().toISOString(),
     });
 
@@ -53,10 +53,10 @@ describe("createTransactionSchema", () => {
 
   it("rejeita data que não está em formato ISO datetime", () => {
     const result = createTransactionSchema.safeParse({
-      title: "Mercado",
+      title: "Groceries",
       amount: 100,
       type: "EXPENSE",
-      category: "Alimentação",
+      category: "Food",
       date: "08/07/2026",
     });
 

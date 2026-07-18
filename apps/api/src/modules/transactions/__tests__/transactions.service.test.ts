@@ -59,20 +59,20 @@ describe("transactions.service", () => {
       prismaMock.transaction.create.mockResolvedValue({} as any);
 
       await createTransaction("user-1", {
-        title: "Mercado",
+        title: "Groceries",
         amount: 150.9,
         type: "EXPENSE",
-        category: "Alimentação",
+        category: "Food",
         date: "2026-07-08T00:00:00.000Z",
       });
 
       expect(prismaMock.transaction.create).toHaveBeenCalledWith({
         data: {
           userId: "user-1",
-          title: "Mercado",
+          title: "Groceries",
           amount: 150.9,
           type: "EXPENSE",
-          category: "Alimentação",
+          category: "Food",
           date: new Date("2026-07-08T00:00:00.000Z"),
         },
       });

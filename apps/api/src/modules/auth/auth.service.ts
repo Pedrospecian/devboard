@@ -42,7 +42,7 @@ export async function loginUser(input: LoginInput) {
   const user = await prisma.user.findUnique({ where: { email: input.email } });
 
   // Mesmo erro para email e senha errados — evita user enumeration
-  const invalidCredentialsError = new Error("Credenciais inválidas");
+  const invalidCredentialsError = new Error("Invalid credentials");
 
   if (!user) throw invalidCredentialsError;
 
@@ -65,11 +65,11 @@ export async function refreshTokens(token: string) {
   try {
     payload = jwt.verify(token, env.JWT_REFRESH_SECRET) as jwt.JwtPayload;
   } catch {
-    throw new Error("Refresh token inválido ou expirado");
+    throw new Error("Invalid or expired refresh token");
   }
 
   const user = await prisma.user.findUnique({ where: { id: payload.sub } });
-  if (!user) throw new Error("Usuário não encontrado");
+  if (!user) throw new Error("User not found");
 
   const accessToken = generateAccessToken(user.id);
   const refreshToken = generateRefreshToken(user.id);
