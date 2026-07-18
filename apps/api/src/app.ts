@@ -30,7 +30,7 @@ app.use("/transactions", transactionsRouter);
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   if (err instanceof ZodError) {
     res.status(422).json({
-      message: "Dados inválidos",
+      message: "Invalid data",
       errors: err.flatten().fieldErrors,
     });
     return;
@@ -42,5 +42,5 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
     return;
   }
 
-  res.status(500).json({ message: "Erro interno do servidor" });
+  res.status(500).json({ message: "Internal server error" });
 });
