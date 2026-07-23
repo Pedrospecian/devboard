@@ -10,12 +10,12 @@ A full-stack personal finance dashboard built with Next.js, Node.js, TypeScript,
 
 ## Features
 
-- **Authentication** — JWT-based login and registration with access and refresh tokens
-- **Financial summary** — monthly balance, total income, and total expenses at a glance
-- **Interactive chart** — bar chart showing income vs. expenses over the last 6 months
-- **Transaction management** — create and delete transactions with category and date
-- **Dark mode** — full light/dark theme support with persistent preference
-- **Responsive layout** — works on desktop and mobile
+- **Authentication** - JWT-based login and registration with access and refresh tokens
+- **Financial summary** - monthly balance, total income, and total expenses at a glance
+- **Interactive chart** - bar chart showing income vs. expenses over the last 6 months
+- **Transaction management** - create and delete transactions with category and date
+- **Dark mode** - full light/dark theme support with persistent preference
+- **Responsive layout** - works on desktop and mobile
 
 ---
 
@@ -48,9 +48,9 @@ A full-stack personal finance dashboard built with Next.js, Node.js, TypeScript,
 
 The project follows a modular architecture on both ends:
 
-**Backend** — each domain (auth, transactions) lives in its own module with a router, controller, service, and schema. The controller handles HTTP concerns, the service holds business logic, and Zod schemas validate all incoming data at the boundary.
+**Backend** - each domain (auth, transactions) lives in its own module with a router, controller, service, and schema. The controller handles HTTP concerns, the service holds business logic, and Zod schemas validate all incoming data at the boundary.
 
-**Frontend** — data fetching is fully encapsulated in custom hooks (`useTransactions`, `useSummary`, `useMonthlyChart`) using React Query. UI is composed of small, single-responsibility components. Global state is handled by two Zustand stores: one for auth, one for theme.
+**Frontend** - data fetching is fully encapsulated in custom hooks (`useTransactions`, `useSummary`, `useMonthlyChart`) using React Query. UI is composed of small, single-responsibility components. Global state is handled by two Zustand stores: one for auth, one for theme.
 
 ```
 devboard/
@@ -163,7 +163,7 @@ The app will be available at `http://localhost:3000`.
 ## Key Technical Decisions
 
 **Why React Query instead of useEffect + useState?**
-React Query handles caching, background refetching, and loading/error states out of the box. After a mutation (create or delete), invalidating the relevant query keys automatically triggers a refetch — no manual state sync needed.
+React Query handles caching, background refetching, and loading/error states out of the box. After a mutation (create or delete), invalidating the relevant query keys automatically triggers a refetch, which means that no manual state sync is needed.
 
 **Why Zustand instead of Redux?**
 For this scale of application, Redux adds boilerplate without meaningful benefit. Zustand provides a minimal API with the same predictability, and integrates cleanly with TypeScript without extra configuration.
