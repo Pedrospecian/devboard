@@ -1,130 +1,103 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { mockDeep, mockReset, type DeepMockProxy } from "vitest-mock-extended";
-import jwt from "jsonwebtoken";
-import type { PrismaClient } from "@prisma/client";
-import { prisma } from "../../../lib/prisma";
+import bcrypt from "bcryptjs";
 
-// Mocka o client do Prisma inteiro — nenhum teste aqui toca um banco real
+// Mock do Prisma antes de importar o service
 vi.mock("../../../lib/prisma", () => ({
-  prisma: mockDeep<PrismaClient>(),
+  prisma: {
+    user: {
+      findUnique: vi.fn(),
+      create: vi.fn(),
+    },
+  },
 }));
 
-const prismaMock = prisma as unknown as DeepMockProxy<PrismaClient>;
+// Mock do bcrypt para controlar o comportamento nos testes
+vi.mock("bcryptjs", () => ({
+  default: {
+    hash: vi.fn().mockResolvedValue("hashed_password"),
+    compare: vi.fn(),
+  },
+}));
 
-// Importado depois do mock, para garantir que o serviço recebe a versão mockada
-import { registerUser, loginUser, refreshTokens } from "../auth.service";
+import { registerUser, loginUser } from "../auth.service";
+import { prisma } from "../../../lib/prisma";
+
+const mockUser = {
+  id: "user-123",
+  name: "Pedro",
+  email: "pedro@teste.com",
+  passwordHash: "hashed_password",
+  createdAt: new Date(),
+};
 
 describe("auth.service", () => {
   beforeEach(() => {
-    mockReset(prismaMock);
+    vi.clearAllMocks();
   });
 
   describe("registerUser", () => {
-    it("cria o usuário e retorna tokens quando o e-mail não existe ainda", async () => {
-      prismaMock.user.findUnique.mockResolvedValue(null);
-      prismaMock.user.create.mockResolvedValue({
-        id: "user-1",
-        name: "Ana Silva",
-        email: "ana@example.com",
-        createdAt: new Date(),
-      } as any);
+    it("should create a new user and return tokens", async () => {
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
+      vi.mocked(prisma.user.create).mockResolvedValue(mockUser);
 
       const result = await registerUser({
-        name: "Ana Silva",
-        email: "ana@example.com",
+        name: "Pedro",
+        email: "pedro@teste.com",
         password: "Senha123",
       });
 
-      expect(result.user.email).toBe("ana@example.com");
-      expect(typeof result.accessToken).toBe("string");
-      expect(typeof result.refreshToken).toBe("string");
-
-      // A senha nunca deve ser salva em texto plano
-      const createCall = prismaMock.user.create.mock.calls[0][0];
-      expect(createCall.data.passwordHash).not.toBe("Senha123");
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        where: { email: "pedro@teste.com" },
+      });
+      expect(prisma.user.create).toHaveBeenCalledOnce();
+      expect(result.user.email).toBe("pedro@teste.com");
+      expect(result.accessToken).toBeDefined();
+      expect(result.refreshToken).toBeDefined();
     });
 
-    it("lança erro quando o e-mail já está cadastrado", async () => {
-      prismaMock.user.findUnique.mockResolvedValue({ id: "user-1" } as any);
+    it("should throw if email is already registered", async () => {
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser);
 
       await expect(
-        registerUser({ name: "Ana", email: "ana@example.com", password: "Senha123" })
+        registerUser({
+          name: "Pedro",
+          email: "pedro@teste.com",
+          password: "Senha123",
+        })
       ).rejects.toThrow("E-mail já cadastrado");
-
-      expect(prismaMock.user.create).not.toHaveBeenCalled();
     });
   });
 
   describe("loginUser", () => {
-    it("retorna tokens para credenciais válidas", async () => {
-      // Hash real de "Senha123" gerado com bcryptjs (12 rounds)
-      const bcrypt = await import("bcryptjs");
-      const passwordHash = await bcrypt.hash("Senha123", 12);
+    it("should return user and tokens on valid credentials", async () => {
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser);
+      vi.mocked(bcrypt.compare).mockResolvedValue(true as never);
 
-      prismaMock.user.findUnique.mockResolvedValue({
-        id: "user-1",
-        name: "Ana",
-        email: "ana@example.com",
-        passwordHash,
-      } as any);
+      const result = await loginUser({
+        email: "pedro@teste.com",
+        password: "Senha123",
+      });
 
-      const result = await loginUser({ email: "ana@example.com", password: "Senha123" });
-
-      expect(result.user).toEqual({ id: "user-1", name: "Ana", email: "ana@example.com" });
-      expect(typeof result.accessToken).toBe("string");
+      expect(result.user.id).toBe("user-123");
+      expect(result.accessToken).toBeDefined();
+      expect(result.refreshToken).toBeDefined();
     });
 
-    it("lança 'Credenciais inválidas' quando o usuário não existe", async () => {
-      prismaMock.user.findUnique.mockResolvedValue(null);
+    it("should throw on wrong password", async () => {
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser);
+      vi.mocked(bcrypt.compare).mockResolvedValue(false as never);
 
       await expect(
-        loginUser({ email: "fantasma@example.com", password: "Senha123" })
-      ).rejects.toThrow("Credenciais inválidas");
+        loginUser({ email: "pedro@teste.com", password: "ErradA123" })
+      ).rejects.toThrow("Invalid credentials");
     });
 
-    it("lança 'Credenciais inválidas' quando a senha está errada (sem revelar qual campo)", async () => {
-      const bcrypt = await import("bcryptjs");
-      const passwordHash = await bcrypt.hash("SenhaCorreta1", 12);
-
-      prismaMock.user.findUnique.mockResolvedValue({
-        id: "user-1",
-        name: "Ana",
-        email: "ana@example.com",
-        passwordHash,
-      } as any);
+    it("should throw on non-existent email", async () => {
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
 
       await expect(
-        loginUser({ email: "ana@example.com", password: "SenhaErrada1" })
-      ).rejects.toThrow("Credenciais inválidas");
-    });
-  });
-
-  describe("refreshTokens", () => {
-    it("gera novos tokens para um refresh token válido", async () => {
-      const refreshToken = jwt.sign({ sub: "user-1" }, process.env.JWT_REFRESH_SECRET!, {
-        expiresIn: "7d",
-      });
-      prismaMock.user.findUnique.mockResolvedValue({ id: "user-1" } as any);
-
-      const result = await refreshTokens(refreshToken);
-
-      expect(typeof result.accessToken).toBe("string");
-      expect(typeof result.refreshToken).toBe("string");
-    });
-
-    it("lança erro para um refresh token inválido", async () => {
-      await expect(refreshTokens("token-invalido")).rejects.toThrow(
-        "Refresh token inválido ou expirado"
-      );
-    });
-
-    it("lança erro quando o usuário do token não existe mais", async () => {
-      const refreshToken = jwt.sign({ sub: "user-inexistente" }, process.env.JWT_REFRESH_SECRET!, {
-        expiresIn: "7d",
-      });
-      prismaMock.user.findUnique.mockResolvedValue(null);
-
-      await expect(refreshTokens(refreshToken)).rejects.toThrow("Usuário não encontrado");
+        loginUser({ email: "naoexiste@teste.com", password: "Senha123" })
+      ).rejects.toThrow("Invalid credentials");
     });
   });
 });

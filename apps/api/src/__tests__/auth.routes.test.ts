@@ -47,7 +47,7 @@ describe("POST /auth/register", () => {
     });
 
     expect(res.status).toBe(422);
-    expect(res.body.message).toBe("Dados inválidos");
+    expect(res.body.message).toBe("Invalid data");
     expect(prismaMock.user.findUnique).not.toHaveBeenCalled();
   });
 
