@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: apps/api
-        run: npm ci
+        run: npm install
 
       - name: Run tests
         working-directory: apps/api
@@ -52,7 +52,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: apps/web
-        run: npm ci
+        run: npm install
 
       - name: Run tests
         working-directory: apps/web
@@ -76,7 +76,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: apps/api
-        run: npm ci
+        run: npm install
 
       - name: Build
         working-directory: apps/api
@@ -100,7 +100,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: apps/web
-        run: npm ci
+        run: npm install
 
       - name: Build
         working-directory: apps/web
