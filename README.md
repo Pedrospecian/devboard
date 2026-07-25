@@ -178,9 +178,9 @@ Zod validates request data at the API boundary and infers TypeScript types from 
 
 ## Roadmap
 
-- [ ] Filter transactions by month and category
-- [ ] Export transactions to CSV
-- [ ] Unit and integration tests (Vitest + Testing Library)
+- [x] Filter transactions by month and category
+- [x] Export transactions to CSV
+- [x] Unit and integration tests (Vitest + Testing Library)
 - [ ] Docker Compose setup for local development
 - [ ] CI/CD pipeline with GitHub Actions
 
