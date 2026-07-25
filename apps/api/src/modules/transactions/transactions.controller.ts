@@ -1,13 +1,29 @@
 import type { Request, Response, NextFunction } from "express";
 import { createTransactionSchema } from "./transactions.schema";
 import * as service from "./transactions.service";
+import { prisma } from "../../lib/prisma";
 
 export async function list(req: Request, res: Response, next: NextFunction) {
   try {
-    const data = await service.getTransactions(req.user!.id);
+    const month = typeof req.query.month === "string" ? req.query.month : undefined;
+    const category = typeof req.query.category === "string" ? req.query.category : undefined;
+    const data = await service.getTransactions(req.user!.id, { month, category });
     res.json(data);
   } catch (err) { next(err); }
 }
+
+export async function categories(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await prisma.transaction.findMany({
+      where: { userId: req.user!.id },
+      select: { category: true },
+      distinct: ["category"],
+      orderBy: { category: "asc" },
+    });
+    res.json(result.map((r) => r.category));
+  } catch (err) { next(err); }
+}
+
 
 export async function summary(req: Request, res: Response, next: NextFunction) {
   try {

@@ -1,9 +1,28 @@
 import { prisma } from "../../lib/prisma";
 import type { CreateTransactionInput } from "./transactions.schema";
 
-export async function getTransactions(userId: string) {
+interface TransactionFilters {
+  month?: string; // formato: "2026-05"
+  category?: string;
+}
+
+export async function getTransactions(userId: string, filters: TransactionFilters = {}) {
+  const where: any = { userId };
+
+  if (filters.month) {
+    const [year, month] = filters.month.split("-").map(Number);
+    where.date = {
+      gte: new Date(year, month - 1, 1),
+      lt: new Date(year, month, 1),
+    };
+  }
+
+  if (filters.category) {
+    where.category = { equals: filters.category, mode: "insensitive" };
+  }
+
   return prisma.transaction.findMany({
-    where: { userId },
+    where,
     orderBy: { date: "desc" },
     take: 50,
   });
