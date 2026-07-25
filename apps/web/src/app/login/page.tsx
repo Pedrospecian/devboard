@@ -32,7 +32,9 @@ export default function LoginPage() {
   return (
     <main style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-subtle)" }}>
       <div style={{ background: "var(--bg-surface)", padding: "2rem", borderRadius: "12px", border: "1px solid var(--border)", width: "100%", maxWidth: "400px" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: "1.5rem" }}>Entrar no DevBoard</h1>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: "1.5rem" }}>
+          Login on DevBoard
+        </h1>
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <div>
@@ -58,7 +60,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Senha</label>
+            <label style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Password</label>
             <input
               type="password"
               value={password}
@@ -86,13 +88,13 @@ export default function LoginPage() {
             disabled={loading}
             style={{ padding: "0.75rem", background: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", fontSize: "1rem", cursor: "pointer", opacity: loading ? 0.7 : 1 }}
           >
-            {loading ? "Entrando..." : "Entrar"}
+            {loading ? "Logging In..." : "Log In"}
           </button>
         </form>
 
         <p style={{ marginTop: "1rem", fontSize: "0.875rem", textAlign: "center", color: "#666" }}>
-          Não tem conta?{" "}
-          <a href="/register" style={{ color: "#2563eb" }}>Cadastre-se</a>
+          Don't you have an account?{" "}
+          <a href="/register" style={{ color: "#2563eb" }}>Sign up</a>
         </p>
       </div>
     </main>

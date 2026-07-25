@@ -67,10 +67,7 @@ export default function DashboardPage() {
 
       {summary && <SummaryCards summary={summary} />}
       <MonthlyChart data={chartData} />
-      <TransactionList
-        transactions={transactions}
-        onDelete={(id) => deleteTransaction.mutate(id)}
-      />
+      <TransactionList />
 
       {showForm && (
         <TransactionForm

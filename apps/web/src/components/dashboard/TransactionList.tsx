@@ -1,6 +1,16 @@
+"use client";
+
+import { useState } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { FaDownload } from "react-icons/fa6";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { TransactionFilters } from "@/components/dashboard/TransactionFilters";
+import { exportTransactionsToCSV } from "@/lib/exportCsv";
+import { useTransactions, useCategories, useDeleteTransaction } from "@/hooks/useTransactions";
+
+const fmt = (n: number) =>
+  n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 export interface Transaction {
   id: string;
@@ -11,24 +21,45 @@ export interface Transaction {
   date: string;
 }
 
-interface TransactionListProps {
-  transactions: Transaction[];
-  onDelete: (id: string) => void;
-}
+export function TransactionList() {
+  const [month, setMonth] = useState("");
+  const [category, setCategory] = useState("");
 
-const fmt = (n: number) =>
-  n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const { data: transactions = [] } = useTransactions({ month, category });
+  const { data: categories = [] } = useCategories();
+  const deleteTransaction = useDeleteTransaction();
 
-export function TransactionList({ transactions, onDelete }: TransactionListProps) {
   return (
     <Card>
-      <h2 style={{ fontSize: "1rem", fontWeight: 600, margin: "0 0 1rem" }}>
-        Transações recentes
-      </h2>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+        <h2 style={{ fontSize: "1rem", fontWeight: 600, margin: 0 }}>
+          Recent transactions
+        </h2>
+        {transactions.length > 0 && (
+          <Button
+            variant="secondary"
+            onClick={() => exportTransactionsToCSV(transactions)}
+            title="Export to CSV"
+            style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem" }}
+          >
+            <FaDownload size={14} />
+            Export CSV
+          </Button>
+        )}
+      </div>
+
+      <TransactionFilters
+        month={month}
+        category={category}
+        categories={categories}
+        onMonthChange={setMonth}
+        onCategoryChange={setCategory}
+        onClear={() => { setMonth(""); setCategory(""); }}
+      />
 
       {transactions.length === 0 ? (
-        <p style={{ color: "#999", textAlign: "center", padding: "2rem 0" }}>
-          Nenhuma transação ainda
+        <p style={{ color: "var(--text-muted)", textAlign: "center", padding: "2rem 0" }}>
+          No transaction registered yet
         </p>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -52,16 +83,10 @@ export function TransactionList({ transactions, onDelete }: TransactionListProps
               </div>
 
               <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                <span
-                  style={{
-                    fontWeight: 600,
-                    color: t.type === "INCOME" ? "var(--income)" : "var(--expense)",
-                  }}
-                >
-                  {t.type === "INCOME" ? "+" : "-"}
-                  {fmt(t.amount)}
+                <span style={{ fontWeight: 600, color: t.type === "INCOME" ? "var(--income)" : "var(--expense)" }}>
+                  {t.type === "INCOME" ? "+" : "-"}{fmt(t.amount)}
                 </span>
-                <Button variant="ghost" onClick={() => onDelete(t.id)} title={"Excluir"} style={{ color: "var(--text-muted)" }}>
+                <Button variant="ghost" onClick={() => deleteTransaction.mutate(t.id)} title="Delete" style={{ color: "var(--text-muted)" }}>
                   <FaRegTrashAlt size={20} />
                 </Button>
               </div>

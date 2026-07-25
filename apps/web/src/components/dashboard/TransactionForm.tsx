@@ -25,9 +25,9 @@ const initialForm: FormState = {
 };
 
 const fields = [
-  { label: "Título", key: "title", type: "text" },
-  { label: "Valor (R$)", key: "amount", type: "number" },
-  { label: "Categoria", key: "category", type: "text" },
+  { label: "Title", key: "title", type: "text" },
+  { label: "Value (R$)", key: "amount", type: "number" },
+  { label: "Category", key: "category", type: "text" },
   { label: "Data", key: "date", type: "date" },
 ] as const;
 
@@ -72,14 +72,15 @@ export function TransactionForm({ onSubmit, onClose }: TransactionFormProps) {
         }}
       >
         <h2 style={{ margin: "0 0 1.5rem", fontSize: "1.25rem", fontWeight: 600 }}>
-          Nova transação
+          New transaction
         </h2>
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           {fields.map(({ label, key, type }) => (
             <div key={key}>
-              <label style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>{label}</label>
+              <label htmlFor={`transaction-${key}`} style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>{label}</label>
               <input
+                id={`transaction-${key}`}
                 type={type}
                 value={form[key]}
                 onChange={(e) => handleChange(key, e.target.value)}
@@ -104,8 +105,9 @@ export function TransactionForm({ onSubmit, onClose }: TransactionFormProps) {
           ))}
 
           <div>
-            <label style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Tipo</label>
+            <label htmlFor="transaction-type" style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Type</label>
             <select
+              id="transaction-type"
               value={form.type}
               onChange={(e) => handleChange("type", e.target.value)}
               style={{
@@ -121,8 +123,8 @@ export function TransactionForm({ onSubmit, onClose }: TransactionFormProps) {
                 colorScheme: "var(--color-scheme)",
               }}
             >
-              <option value="EXPENSE">Despesa</option>
-              <option value="INCOME">Receita</option>
+              <option value="EXPENSE">Expense</option>
+              <option value="INCOME">Income</option>
             </select>
           </div>
 
@@ -133,14 +135,14 @@ export function TransactionForm({ onSubmit, onClose }: TransactionFormProps) {
               onClick={onClose}
               style={{ flex: 1, padding: "0.75rem" }}
             >
-              Cancelar
+              Cancel
             </Button>
             <Button
               type="submit"
               disabled={loading}
               style={{ flex: 1, padding: "0.75rem" }}
             >
-              {loading ? "Salvando..." : "Salvar"}
+              {loading ? "Saving..." : "Save"}
             </Button>
           </div>
         </form>

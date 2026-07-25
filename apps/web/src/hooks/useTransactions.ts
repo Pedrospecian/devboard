@@ -9,11 +9,16 @@ interface FormState {
   date: string;
 }
 
-// Chaves de cache centralizadas — evita strings duplicadas em vários arquivos
+interface TransactionFilters {
+  month?: string;
+  category?: string;
+}
+
 export const transactionKeys = {
-  all: ["transactions"] as const,
+  all: (filters?: TransactionFilters) => ["transactions", filters] as const,
   summary: ["transactions", "summary"] as const,
   chart: ["transactions", "chart"] as const,
+  categories: ["transactions", "categories"] as const,
 };
 
 export function useSummary() {
@@ -23,10 +28,22 @@ export function useSummary() {
   });
 }
 
-export function useTransactions() {
+export function useTransactions(filters: TransactionFilters = {}) {
+  const params = new URLSearchParams();
+  if (filters.month) params.set("month", filters.month);
+  if (filters.category) params.set("category", filters.category);
+  const query = params.toString() ? `?${params.toString()}` : "";
+
   return useQuery({
-    queryKey: transactionKeys.all,
-    queryFn: () => api.get("/transactions").then((r) => r.data),
+    queryKey: transactionKeys.all(filters),
+    queryFn: () => api.get(`/transactions${query}`).then((r) => r.data),
+  });
+}
+
+export function useCategories() {
+  return useQuery({
+    queryKey: transactionKeys.categories,
+    queryFn: () => api.get("/transactions/categories").then((r) => r.data as string[]),
   });
 }
 
@@ -49,11 +66,8 @@ export function useCreateTransaction() {
         category: form.category,
         date: new Date(form.date).toISOString(),
       }),
-    // Invalida o cache após criar — React Query refaz os fetches automaticamente
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: transactionKeys.all });
-      queryClient.invalidateQueries({ queryKey: transactionKeys.summary });
-      queryClient.invalidateQueries({ queryKey: transactionKeys.chart });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 }
@@ -64,9 +78,7 @@ export function useDeleteTransaction() {
   return useMutation({
     mutationFn: (id: string) => api.delete(`/transactions/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: transactionKeys.all });
-      queryClient.invalidateQueries({ queryKey: transactionKeys.summary });
-      queryClient.invalidateQueries({ queryKey: transactionKeys.chart });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
     },
   });
 }

@@ -25,7 +25,6 @@ interface MonthlyChartProps {
 const fmt = (n: number) =>
   n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-// Paleta separada por tema — fácil de ajustar depois
 const palette = {
   light: {
     income: "#16a34a",
@@ -114,14 +113,14 @@ export function MonthlyChart({ data }: MonthlyChartProps) {
           />
           <Bar
             dataKey="income"
-            name="Receitas"
+            name="Incomes"
             fill={colors.income}
             activeBar={{ fill: colors.incomeHover }}
             radius={[4, 4, 0, 0]}
           />
           <Bar
             dataKey="expense"
-            name="Despesas"
+            name="Expense"
             fill={colors.expense}
             activeBar={{ fill: colors.expenseHover }}
             radius={[4, 4, 0, 0]}

@@ -16,17 +16,17 @@ const fmt = (n: number) =>
 export function SummaryCards({ summary }: SummaryCardsProps) {
   const cards = [
     {
-      label: "Saldo do mês",
+      label: "Month balance",
       value: summary.balance,
       color: summary.balance >= 0 ? "var(--income)" : "var(--expense)",
     },
     {
-      label: "Receitas",
+      label: "Incomes",
       value: summary.income,
       color: "var(--income)",
     },
     {
-      label: "Despesas",
+      label: "Expenses",
       value: summary.expense,
       color: "var(--expense)",
     },
