@@ -27,19 +27,40 @@ const baseTransactions: Transaction[] = [
 
 describe("TransactionList", () => {
   it("shows the 'empty list' message when there are no transactions", () => {
-    render(<TransactionList transactions={[]} onDelete={vi.fn()} />);
+    render(
+      <TransactionList
+        transactions={[]}
+        categories={[]}
+        onDelete={vi.fn()}
+        onFilterChange={vi.fn()}
+      />
+    );
     expect(screen.getByText("No transaction registered yet")).toBeInTheDocument();
   });
 
   it("renders one line for each transaction", () => {
-    render(<TransactionList transactions={baseTransactions} onDelete={vi.fn()} />);
+    render(
+      <TransactionList
+        transactions={baseTransactions}
+        categories={[]}
+        onDelete={vi.fn()}
+        onFilterChange={vi.fn()}
+      />
+    );
 
     expect(screen.getByText("Salary")).toBeInTheDocument();
     expect(screen.getByText("Rent")).toBeInTheDocument();
   });
 
   it("shows incomes with + sign and expenses with - sign", () => {
-    render(<TransactionList transactions={baseTransactions} onDelete={vi.fn()} />);
+    render(
+      <TransactionList
+        transactions={baseTransactions}
+        categories={[]}
+        onDelete={vi.fn()}
+        onFilterChange={vi.fn()}
+      />
+    );
 
     expect(screen.getByText("+R$ 5.000,00")).toBeInTheDocument();
     expect(screen.getByText("-R$ 1.500,00")).toBeInTheDocument();
@@ -48,8 +69,15 @@ describe("TransactionList", () => {
   it("calls onDelete with the proper id when the Delete button is clicked", async () => {
     const user = userEvent.setup();
     const handleDelete = vi.fn();
-
-    render(<TransactionList transactions={baseTransactions} onDelete={handleDelete} />);
+    
+    render(
+      <TransactionList
+        transactions={baseTransactions}
+        categories={[]}
+        onDelete={handleDelete}
+        onFilterChange={vi.fn()}
+      />
+    );
 
     const deleteButtons = screen.getAllByTitle("Delete");
     await user.click(deleteButtons[0]);

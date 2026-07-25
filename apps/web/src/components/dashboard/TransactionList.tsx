@@ -7,10 +7,6 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { TransactionFilters } from "@/components/dashboard/TransactionFilters";
 import { exportTransactionsToCSV } from "@/lib/exportCsv";
-import { useTransactions, useCategories, useDeleteTransaction } from "@/hooks/useTransactions";
-
-const fmt = (n: number) =>
-  n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 export interface Transaction {
   id: string;
@@ -21,13 +17,40 @@ export interface Transaction {
   date: string;
 }
 
-export function TransactionList() {
+interface TransactionListProps {
+  transactions: Transaction[];
+  categories: string[];
+  onDelete: (id: string) => void;
+  onFilterChange: (filters: { month: string; category: string }) => void;
+}
+
+const fmt = (n: number) =>
+  n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+export function TransactionList({
+  transactions,
+  categories,
+  onDelete,
+  onFilterChange,
+}: TransactionListProps) {
   const [month, setMonth] = useState("");
   const [category, setCategory] = useState("");
 
-  const { data: transactions = [] } = useTransactions({ month, category });
-  const { data: categories = [] } = useCategories();
-  const deleteTransaction = useDeleteTransaction();
+  function handleMonthChange(value: string) {
+    setMonth(value);
+    onFilterChange({ month: value, category });
+  }
+
+  function handleCategoryChange(value: string) {
+    setCategory(value);
+    onFilterChange({ month, category: value });
+  }
+
+  function handleClear() {
+    setMonth("");
+    setCategory("");
+    onFilterChange({ month: "", category: "" });
+  }
 
   return (
     <Card>
@@ -52,9 +75,9 @@ export function TransactionList() {
         month={month}
         category={category}
         categories={categories}
-        onMonthChange={setMonth}
-        onCategoryChange={setCategory}
-        onClear={() => { setMonth(""); setCategory(""); }}
+        onMonthChange={handleMonthChange}
+        onCategoryChange={handleCategoryChange}
+        onClear={handleClear}
       />
 
       {transactions.length === 0 ? (
@@ -86,7 +109,7 @@ export function TransactionList() {
                 <span style={{ fontWeight: 600, color: t.type === "INCOME" ? "var(--income)" : "var(--expense)" }}>
                   {t.type === "INCOME" ? "+" : "-"}{fmt(t.amount)}
                 </span>
-                <Button variant="ghost" onClick={() => deleteTransaction.mutate(t.id)} title="Delete" style={{ color: "var(--text-muted)" }}>
+                <Button variant="ghost" onClick={() => onDelete(t.id)} title="Delete" style={{ color: "var(--text-muted)" }}>
                   <FaRegTrashAlt size={20} />
                 </Button>
               </div>

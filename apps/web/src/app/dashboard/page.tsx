@@ -16,6 +16,7 @@ import {
   useSummary,
   useTransactions,
   useMonthlyChart,
+  useCategories,
   useCreateTransaction,
   useDeleteTransaction,
 } from "@/hooks/useTransactions";
@@ -31,9 +32,11 @@ export default function DashboardPage() {
   }, [user]);
 
   const { data: summary } = useSummary();
-  const { data: transactions = [] } = useTransactions();
   const { data: chartData = [] } = useMonthlyChart();
   const createTransaction = useCreateTransaction();
+  const [filters, setFilters] = useState({ month: "", category: "" });
+  const { data: transactions = [] } = useTransactions(filters);
+  const { data: categories = [] } = useCategories();
   const deleteTransaction = useDeleteTransaction();
 
   if (!user) return null;
@@ -67,7 +70,12 @@ export default function DashboardPage() {
 
       {summary && <SummaryCards summary={summary} />}
       <MonthlyChart data={chartData} />
-      <TransactionList />
+      <TransactionList
+        transactions={transactions}
+        categories={categories}
+        onDelete={(id) => deleteTransaction.mutate(id)}
+        onFilterChange={setFilters}
+      />
 
       {showForm && (
         <TransactionForm
