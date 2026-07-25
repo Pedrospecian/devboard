@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ZodError } from "zod";
 import request from "supertest";
 import express from "express";
 import { authRouter } from "../auth.router";
@@ -35,6 +36,10 @@ const app = express();
 app.use(express.json());
 app.use("/auth", authRouter);
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if (err instanceof ZodError) {
+    res.status(422).json({ message: "Invalid data", errors: err.flatten().fieldErrors });
+    return;
+  }
   res.status(400).json({ message: err.message });
 });
 
