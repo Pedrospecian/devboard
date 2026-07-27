@@ -4,7 +4,7 @@ A full-stack personal finance dashboard built with Next.js, Node.js, TypeScript,
 
 ![Dashboard Preview](https://github.com/Pedrospecian/devboard/blob/main/docs/screenshot-light.png)
 
-🔗 **Live demo:** (https://devboard-web-pink.vercel.app/)
+🔗 **Live demo:** https://devboard-web-pink.vercel.app
 
 ---
 
