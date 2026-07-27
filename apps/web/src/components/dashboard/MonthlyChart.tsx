@@ -23,7 +23,7 @@ interface MonthlyChartProps {
 }
 
 const fmt = (n: number) =>
-  n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  n.toLocaleString("en-US", { style: "currency", currency: "BRL" });
 
 const palette = {
   light: {
@@ -89,7 +89,7 @@ export function MonthlyChart({ data }: MonthlyChartProps) {
   return (
     <Card style={{ marginBottom: "2rem" }}>
       <h2 style={{ fontSize: "1rem", fontWeight: 600, margin: "0 0 1rem" }}>
-        Últimos 6 meses
+        Last 6 months
       </h2>
       <ResponsiveContainer width="100%" height={240}>
         <BarChart data={data} style={{ cursor: "default" }}>

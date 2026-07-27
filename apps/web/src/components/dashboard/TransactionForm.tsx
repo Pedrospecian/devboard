@@ -28,7 +28,7 @@ const fields = [
   { label: "Title", key: "title", type: "text" },
   { label: "Value (R$)", key: "amount", type: "number" },
   { label: "Category", key: "category", type: "text" },
-  { label: "Data", key: "date", type: "date" },
+  { label: "Date", key: "date", type: "date" },
 ] as const;
 
 export function TransactionForm({ onSubmit, onClose }: TransactionFormProps) {

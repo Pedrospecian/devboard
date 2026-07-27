@@ -60,11 +60,11 @@ export default function DashboardPage() {
         </Button>
         <div>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 600, margin: 0 }}>DevBoard</h1>
-          <p style={{ color: "var(--text-secondary)", margin: 0, fontSize: "0.875rem" }}>Olá, {user.name}</p>
+          <p style={{ color: "var(--text-secondary)", margin: 0, fontSize: "0.875rem" }}>Hi there, {user.name}</p>
         </div>
         <div style={{ display: "flex", gap: "0.75rem" }}>
-          <Button onClick={() => setShowForm(true)}>+ Nova transação</Button>
-          <Button variant="secondary" onClick={handleLogout}>Sair</Button>
+          <Button onClick={() => setShowForm(true)}>Add transaction</Button>
+          <Button variant="secondary" onClick={handleLogout}>Logout</Button>
         </div>
       </div>
 
