@@ -86,7 +86,7 @@ export function TransactionList({
         </p>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-          {transactions.map((t) => (
+          {transactions.map((t: Transaction) => (
             <div
               key={t.id}
               style={{
